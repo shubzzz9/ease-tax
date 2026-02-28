@@ -160,28 +160,15 @@ export function computeTax(inputs: TaxInputs, regime: 'old' | 'new'): TaxResult 
   // 3. BUSINESS
   const businessIncome = Math.max(0, inputs.netProfit + inputs.businessAdjustments - inputs.bfBusinessLoss);
 
-  // 4. CAPITAL GAINS
-  const stcg111A = Math.max(0, inputs.stcgEquity);
-  const ltcg112ARaw = Math.max(0, inputs.ltcgEquity);
-  const ltcg112AAfterExemption = Math.max(0, ltcg112ARaw - 125000);
-  const ltcg112 = Math.max(0, inputs.ltcgProperty - inputs.exemptions54);
-  const stcgOther = Math.max(0, inputs.stcgOther);
-
-  // B/F capital loss
-  let totalSpecialCG = stcg111A + ltcg112AAfterExemption + ltcg112;
-  const bfLossSetoff = Math.min(inputs.bfCapitalLoss, totalSpecialCG + stcgOther);
-  if (bfLossSetoff > 0) {
-    totalSpecialCG = Math.max(0, totalSpecialCG + stcgOther - bfLossSetoff) - stcgOther;
-    if (totalSpecialCG < 0) totalSpecialCG = 0;
-  }
-
-  const capitalGainsSpecial = totalSpecialCG;
-  const capitalGainsNormal = Math.max(0, stcgOther - Math.max(0, bfLossSetoff - (stcg111A + ltcg112AAfterExemption + ltcg112)));
-
-  // Tax on special CG
-  const stcg111ATax = stcg111A * 0.20;
-  const ltcg112ATax = ltcg112AAfterExemption * 0.125;
-  const ltcg112TaxAmt = ltcg112 * 0.125;
+  // 4. CAPITAL GAINS (computed from transactions)
+  const cgResult = computeAggregatedCapitalGains(
+    inputs.capitalGainTransactions, inputs.bfCapitalLossSTCG, inputs.bfCapitalLossLTCG
+  );
+  const capitalGainsNormal = cgResult.capitalGainsNormal;
+  const capitalGainsSpecial = cgResult.capitalGainsSpecial;
+  const stcg111ATax = cgResult.stcg111ATax;
+  const ltcg112ATax = cgResult.ltcg112ATax;
+  const ltcg112TaxAmt = cgResult.ltcg112Tax;
 
   // 5. OTHER INCOME
   const fpDeduction = inputs.familyPension > 0 ? Math.min(inputs.familyPension / 3, 15000) : 0;

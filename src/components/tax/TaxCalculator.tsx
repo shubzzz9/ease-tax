@@ -108,7 +108,7 @@ export function TaxCalculator() {
             </div>
           </AccordionTrigger>
           <AccordionContent className="pb-4">
-            <CapitalGainsSection inputs={inputs} update={update} />
+            <CapitalGainsSection inputs={inputs} update={update} updateTransactions={updateTransactions} />
           </AccordionContent>
         </AccordionItem>
 

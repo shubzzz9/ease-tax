@@ -92,6 +92,12 @@ export const DEMO_INPUTS: TaxInputs = {
   homeLoanInterest: 200000,
   propertyType: 'selfOccupied',
   sec80C: 150000,
-  stcgEquity: 50000,
+  capitalGainTransactions: [{
+    id: 'demo1', assetType: 'listedEquity',
+    dateOfAcquisition: '2025-03-15', dateOfTransfer: '2025-09-20',
+    saleConsideration: 200000, transferExpenses: 500,
+    costOfAcquisition: 149500, costOfImprovement: 0,
+    exemptionType: 'none', exemptionAmount: 0, capitalGainsAccountScheme: false,
+  }],
   tds: 80000,
 };
