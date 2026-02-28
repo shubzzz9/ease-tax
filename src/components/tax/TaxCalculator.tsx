@@ -34,6 +34,10 @@ export function TaxCalculator() {
     setInputs(prev => ({ ...prev, [field]: value }));
   }, []);
 
+  const updateTransactions = useCallback((txns: CapitalGainTransaction[]) => {
+    setInputs(prev => ({ ...prev, capitalGainTransactions: txns }));
+  }, []);
+
   const oldResult = useMemo(() => computeTax(inputs, 'old'), [inputs]);
   const newResult = useMemo(() => computeTax(inputs, 'new'), [inputs]);
 
