@@ -1,5 +1,6 @@
 import { useState, useMemo, useCallback, useEffect } from 'react';
 import { TaxInputs, DEFAULT_INPUTS, DEMO_INPUTS } from '@/lib/tax-types';
+import { CapitalGainTransaction } from '@/lib/capital-gains-types';
 import { computeTax } from '@/lib/tax-engine';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Button } from '@/components/ui/button';
