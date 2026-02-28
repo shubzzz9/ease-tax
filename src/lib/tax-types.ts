@@ -18,12 +18,9 @@ export interface TaxInputs {
   netProfit: number;
   businessAdjustments: number;
   bfBusinessLoss: number;
-  stcgEquity: number;
-  ltcgEquity: number;
-  ltcgProperty: number;
-  stcgOther: number;
-  exemptions54: number;
-  bfCapitalLoss: number;
+  capitalGainTransactions: CapitalGainTransaction[];
+  bfCapitalLossSTCG: number;
+  bfCapitalLossLTCG: number;
   fdInterest: number;
   savingsInterest: number;
   dividend: number;
