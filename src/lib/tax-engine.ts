@@ -1,4 +1,5 @@
 import { TaxInputs, TaxResult } from './tax-types';
+import { computeAggregatedCapitalGains } from './capital-gains-engine';
 
 interface Slab { limit: number; rate: number }
 
