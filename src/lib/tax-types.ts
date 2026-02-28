@@ -1,3 +1,5 @@
+import { CapitalGainTransaction } from './capital-gains-types';
+
 export interface TaxInputs {
   ageGroup: 'below60' | '60to79' | '80plus';
   employmentType: 'salaried' | 'business' | 'both';
@@ -16,12 +18,9 @@ export interface TaxInputs {
   netProfit: number;
   businessAdjustments: number;
   bfBusinessLoss: number;
-  stcgEquity: number;
-  ltcgEquity: number;
-  ltcgProperty: number;
-  stcgOther: number;
-  exemptions54: number;
-  bfCapitalLoss: number;
+  capitalGainTransactions: CapitalGainTransaction[];
+  bfCapitalLossSTCG: number;
+  bfCapitalLossLTCG: number;
   fdInterest: number;
   savingsInterest: number;
   dividend: number;
@@ -78,8 +77,8 @@ export const DEFAULT_INPUTS: TaxInputs = {
   otherAllowances: 0, professionalTax: 0, employerNps: 0,
   propertyType: 'none', rentReceived: 0, municipalTaxes: 0, homeLoanInterest: 0,
   netProfit: 0, businessAdjustments: 0, bfBusinessLoss: 0,
-  stcgEquity: 0, ltcgEquity: 0, ltcgProperty: 0, stcgOther: 0,
-  exemptions54: 0, bfCapitalLoss: 0,
+  capitalGainTransactions: [],
+  bfCapitalLossSTCG: 0, bfCapitalLossLTCG: 0,
   fdInterest: 0, savingsInterest: 0, dividend: 0, familyPension: 0,
   agriculturalIncome: 0, otherIncome: 0,
   sec80C: 0, sec80D: 0, sec80CCD1B: 0, sec80E: 0, sec80G: 0,
@@ -93,6 +92,12 @@ export const DEMO_INPUTS: TaxInputs = {
   homeLoanInterest: 200000,
   propertyType: 'selfOccupied',
   sec80C: 150000,
-  stcgEquity: 50000,
+  capitalGainTransactions: [{
+    id: 'demo1', assetType: 'listedEquity',
+    dateOfAcquisition: '2025-03-15', dateOfTransfer: '2025-09-20',
+    saleConsideration: 200000, transferExpenses: 500,
+    costOfAcquisition: 149500, costOfImprovement: 0,
+    exemptionType: 'none', exemptionAmount: 0, capitalGainsAccountScheme: false,
+  }],
   tds: 80000,
 };
