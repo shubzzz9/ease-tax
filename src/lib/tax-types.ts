@@ -1,3 +1,5 @@
+import { CapitalGainTransaction } from './capital-gains-types';
+
 export interface TaxInputs {
   ageGroup: 'below60' | '60to79' | '80plus';
   employmentType: 'salaried' | 'business' | 'both';
