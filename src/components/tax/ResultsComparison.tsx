@@ -41,8 +41,12 @@ export function ResultsComparison({ inputs, oldResult, newResult }: Props) {
       ['Surcharge', oldResult.surcharge, newResult.surcharge],
       ['Cess', oldResult.cess, newResult.cess],
       ['Total Tax', oldResult.totalTaxLiability, newResult.totalTaxLiability],
+      ['Interest 234A', oldResult.interest234A, newResult.interest234A],
+      ['Interest 234B', oldResult.interest234B, newResult.interest234B],
+      ['Interest 234C', oldResult.interest234C, newResult.interest234C],
+      ['Total Interest', oldResult.totalInterest, newResult.totalInterest],
       ['Tax Paid', oldResult.taxPaid, newResult.taxPaid],
-      ['Net Payable / (Refund)', oldResult.netPayable, newResult.netPayable],
+      ['Total Amount Payable', oldResult.totalAmountPayable, newResult.totalAmountPayable],
     ];
     const csv = rows.map(r => r.join(',')).join('\n');
     const blob = new Blob([csv], { type: 'text/csv' });
@@ -87,7 +91,6 @@ export function ResultsComparison({ inputs, oldResult, newResult }: Props) {
           </div>
         </div>
 
-        {/* Header */}
         <div className="grid grid-cols-3 gap-2 py-2 px-2 rounded bg-muted/50 mb-2">
           <span className="text-xs font-medium text-muted-foreground">Particulars</span>
           <span className="text-xs font-medium text-right text-muted-foreground">Old Regime</span>
@@ -111,9 +114,32 @@ export function ResultsComparison({ inputs, oldResult, newResult }: Props) {
           <Row label="Health & Education Cess (4%)" old={oldResult.cess} new={newResult.cess} />
           <Separator className="my-1 bg-border/50" />
           <Row label="TOTAL TAX LIABILITY" old={oldResult.totalTaxLiability} new={newResult.totalTaxLiability} highlight />
+
+          {/* Interest rows */}
+          {(oldResult.totalInterest > 0 || newResult.totalInterest > 0) && (
+            <>
+              <Separator className="my-1 bg-border/50" />
+              {(oldResult.interest234A > 0 || newResult.interest234A > 0) && (
+                <Row label="Interest – Late Filing" old={oldResult.interest234A} new={newResult.interest234A} />
+              )}
+              {(oldResult.interest234B > 0 || newResult.interest234B > 0) && (
+                <Row label="Interest – Advance Tax Shortfall" old={oldResult.interest234B} new={newResult.interest234B} />
+              )}
+              {(oldResult.interest234C > 0 || newResult.interest234C > 0) && (
+                <Row label="Interest – Delayed Payment" old={oldResult.interest234C} new={newResult.interest234C} />
+              )}
+              <Row label="Total Interest" old={oldResult.totalInterest} new={newResult.totalInterest} />
+            </>
+          )}
+
           <Row label="Less: Tax Already Paid" old={oldResult.taxPaid} new={newResult.taxPaid} />
           <Separator className="my-1 bg-border/50" />
-          <Row label={oldResult.netPayable >= 0 ? "NET TAX PAYABLE" : "REFUND DUE"} old={oldResult.netPayable} new={newResult.netPayable} highlight />
+          <Row
+            label={oldResult.totalAmountPayable >= 0 ? "TOTAL AMOUNT PAYABLE" : "REFUND DUE"}
+            old={oldResult.totalAmountPayable}
+            new={newResult.totalAmountPayable}
+            highlight
+          />
         </div>
 
         <div className="mt-4 flex items-center justify-center gap-2 py-3 px-4 rounded-lg gold-gradient">

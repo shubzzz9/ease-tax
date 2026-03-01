@@ -1,4 +1,6 @@
 import { CapitalGainTransaction } from './capital-gains-types';
+import { BusinessInputs, DEFAULT_BUSINESS_INPUTS } from './business-types';
+import { AdvanceTaxInstallment } from './interest-engine';
 
 export interface TaxInputs {
   ageGroup: 'below60' | '60to79' | '80plus';
@@ -15,9 +17,12 @@ export interface TaxInputs {
   rentReceived: number;
   municipalTaxes: number;
   homeLoanInterest: number;
+  // Legacy fields kept for backward compat
   netProfit: number;
   businessAdjustments: number;
   bfBusinessLoss: number;
+  // New PGBP engine
+  businessInputs: BusinessInputs;
   capitalGainTransactions: CapitalGainTransaction[];
   bfCapitalLossSTCG: number;
   bfCapitalLossLTCG: number;
@@ -38,6 +43,11 @@ export interface TaxInputs {
   tds: number;
   advanceTax: number;
   selfAssessmentTax: number;
+  // Interest computation fields
+  advanceTaxInstallments: AdvanceTaxInstallment[];
+  returnFilingDate: string;
+  dueDate: string;
+  useAdvancedMode: boolean;
 }
 
 export interface TaxResult {
@@ -67,6 +77,12 @@ export interface TaxResult {
   totalTaxLiability: number;
   taxPaid: number;
   netPayable: number;
+  // Interest
+  interest234A: number;
+  interest234B: number;
+  interest234C: number;
+  totalInterest: number;
+  totalAmountPayable: number;
   warnings: string[];
 }
 
@@ -77,6 +93,7 @@ export const DEFAULT_INPUTS: TaxInputs = {
   otherAllowances: 0, professionalTax: 0, employerNps: 0,
   propertyType: 'none', rentReceived: 0, municipalTaxes: 0, homeLoanInterest: 0,
   netProfit: 0, businessAdjustments: 0, bfBusinessLoss: 0,
+  businessInputs: { ...DEFAULT_BUSINESS_INPUTS },
   capitalGainTransactions: [],
   bfCapitalLossSTCG: 0, bfCapitalLossLTCG: 0,
   fdInterest: 0, savingsInterest: 0, dividend: 0, familyPension: 0,
@@ -84,6 +101,10 @@ export const DEFAULT_INPUTS: TaxInputs = {
   sec80C: 0, sec80D: 0, sec80CCD1B: 0, sec80E: 0, sec80G: 0,
   sec80TTA: 0, sec80U: 0, otherDeductions: 0,
   tds: 0, advanceTax: 0, selfAssessmentTax: 0,
+  advanceTaxInstallments: [],
+  returnFilingDate: '',
+  dueDate: '2026-07-31',
+  useAdvancedMode: false,
 };
 
 export const DEMO_INPUTS: TaxInputs = {

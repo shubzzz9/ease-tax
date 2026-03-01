@@ -1,5 +1,7 @@
 import { TaxInputs, TaxResult } from './tax-types';
 import { computeAggregatedCapitalGains } from './capital-gains-engine';
+import { computeBusinessIncome } from './business-engine';
+import { computeInterest } from './interest-engine';
 
 interface Slab { limit: number; rate: number }
 
@@ -81,7 +83,6 @@ function computeSurcharge(
     threshold = b.threshold;
     break;
   }
-  // If beyond all brackets
   if (applicableRate === 0) {
     const last = brackets[brackets.length - 1];
     if (totalIncome > last.threshold) {
@@ -92,13 +93,11 @@ function computeSurcharge(
   }
   if (applicableRate === 0) return { surcharge: 0, marginalRelief: 0 };
 
-  // Surcharge on special rate income capped at 15%
   const normalTax = tax - specialTax;
   const scNormal = normalTax * applicableRate;
   const scSpecial = specialTax * Math.min(applicableRate, 0.15);
   let surcharge = scNormal + scSpecial;
 
-  // Marginal relief
   const prevScNormal = normalTax * prevRate;
   const prevScSpecial = specialTax * Math.min(prevRate, 0.15);
   const prevSurcharge = prevScNormal + prevScSpecial;
@@ -122,7 +121,6 @@ export function computeTax(inputs: TaxInputs, regime: 'old' | 'new'): TaxResult 
 
   // 1. SALARY
   const grossSalary = inputs.basicSalary + inputs.da + inputs.hra + inputs.otherAllowances;
-
   let hraExemption = 0;
   if (regime === 'old' && inputs.hra > 0 && inputs.rentPaid > 0) {
     const salary = inputs.basicSalary + inputs.da;
@@ -132,11 +130,9 @@ export function computeTax(inputs: TaxInputs, regime: 'old' | 'new'): TaxResult 
       (inputs.cityType === 'metro' ? 0.5 : 0.4) * salary
     );
   }
-
   const standardDeduction = isSalaried ? (regime === 'new' ? 75000 : 50000) : 0;
   const profTax = regime === 'old' ? inputs.professionalTax : 0;
-  const employerNps = inputs.employerNps; // Allowed in both
-
+  const employerNps = inputs.employerNps;
   const netSalaryIncome = Math.max(0, grossSalary - hraExemption - standardDeduction - profTax - employerNps);
 
   // 2. HOUSE PROPERTY
@@ -147,7 +143,6 @@ export function computeTax(inputs: TaxInputs, regime: 'old' | 'new'): TaxResult 
     const nav = Math.max(0, inputs.rentReceived - inputs.municipalTaxes);
     housePropertyIncome = nav - nav * 0.3 - inputs.homeLoanInterest;
   }
-
   if (regime === 'new' && housePropertyIncome < 0) {
     warnings.push('Loss from House Property cannot be set off under New Regime.');
     housePropertyIncome = 0;
@@ -157,10 +152,12 @@ export function computeTax(inputs: TaxInputs, regime: 'old' | 'new'): TaxResult 
     housePropertyIncome = -200000;
   }
 
-  // 3. BUSINESS
-  const businessIncome = Math.max(0, inputs.netProfit + inputs.businessAdjustments - inputs.bfBusinessLoss);
+  // 3. BUSINESS (new engine)
+  const bizResult = computeBusinessIncome(inputs.businessInputs);
+  const businessIncome = bizResult.taxableBusinessIncome;
+  warnings.push(...bizResult.warnings);
 
-  // 4. CAPITAL GAINS (computed from transactions)
+  // 4. CAPITAL GAINS
   const cgResult = computeAggregatedCapitalGains(
     inputs.capitalGainTransactions, inputs.bfCapitalLossSTCG, inputs.bfCapitalLossLTCG
   );
@@ -219,7 +216,6 @@ export function computeTax(inputs: TaxInputs, regime: 'old' | 'new'): TaxResult 
     if (totalTaxableIncome <= 1200000) {
       rebate87A = taxOnNormal;
     } else {
-      // Marginal relief on rebate
       const excess = totalTaxableIncome - 1200000;
       if (taxOnNormal > excess) {
         rebate87A = taxOnNormal - excess;
@@ -251,6 +247,22 @@ export function computeTax(inputs: TaxInputs, regime: 'old' | 'new'): TaxResult 
   // 15. TAX PAID
   const taxPaid = inputs.tds + inputs.advanceTax + inputs.selfAssessmentTax;
 
+  // 16. INTEREST u/s 234A, 234B, 234C
+  const isPresumptive = inputs.businessInputs.taxationType === 'presumptive44AD'
+    || inputs.businessInputs.taxationType === 'presumptive44ADA';
+
+  const interestResult = computeInterest({
+    totalTaxLiability,
+    tds: inputs.tds,
+    advanceTaxTotal: inputs.advanceTax,
+    selfAssessmentTax: inputs.selfAssessmentTax,
+    advanceTaxInstallments: inputs.advanceTaxInstallments,
+    returnFilingDate: inputs.returnFilingDate,
+    dueDate: inputs.dueDate,
+    isPresumptive,
+    useAdvancedMode: inputs.useAdvancedMode,
+  });
+
   return {
     grossSalaryIncome: grossSalary,
     hraExemption,
@@ -278,6 +290,11 @@ export function computeTax(inputs: TaxInputs, regime: 'old' | 'new'): TaxResult 
     totalTaxLiability,
     taxPaid,
     netPayable: totalTaxLiability - taxPaid,
+    interest234A: interestResult.interest234A,
+    interest234B: interestResult.interest234B,
+    interest234C: interestResult.interest234C,
+    totalInterest: interestResult.totalInterest,
+    totalAmountPayable: totalTaxLiability + interestResult.totalInterest - taxPaid,
     warnings,
   };
 }
