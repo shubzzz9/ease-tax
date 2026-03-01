@@ -39,10 +39,10 @@ export function SummaryDashboard({ oldResult, newResult }: Props) {
       color: 'text-success',
     },
     {
-      label: betterResult.netPayable >= 0 ? 'Net Payable' : 'Refund Due',
-      value: formatINR(Math.abs(betterResult.netPayable)),
-      icon: betterResult.netPayable >= 0 ? TrendingUp : TrendingDown,
-      color: betterResult.netPayable < 0 ? 'text-success' : 'text-destructive',
+      label: betterResult.totalAmountPayable >= 0 ? 'Net Payable' : 'Refund Due',
+      value: formatINR(Math.abs(betterResult.totalAmountPayable)),
+      icon: betterResult.totalAmountPayable >= 0 ? TrendingUp : TrendingDown,
+      color: betterResult.totalAmountPayable < 0 ? 'text-success' : 'text-destructive',
     },
   ];
 

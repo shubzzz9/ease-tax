@@ -1,5 +1,6 @@
 import { useState, useMemo, useCallback, useEffect } from 'react';
 import { TaxInputs, DEFAULT_INPUTS, DEMO_INPUTS } from '@/lib/tax-types';
+import { BusinessInputs } from '@/lib/business-types';
 import { CapitalGainTransaction } from '@/lib/capital-gains-types';
 import { computeTax } from '@/lib/tax-engine';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
@@ -19,7 +20,6 @@ import { ResultsComparison } from './ResultsComparison';
 export function TaxCalculator() {
   const [inputs, setInputs] = useState<TaxInputs>(DEFAULT_INPUTS);
 
-  // Load from URL hash if present
   useEffect(() => {
     const hash = window.location.hash.slice(1);
     if (hash) {
@@ -30,8 +30,12 @@ export function TaxCalculator() {
     }
   }, []);
 
-  const update = useCallback((field: string, value: number | string) => {
+  const update = useCallback((field: string, value: number | string | boolean) => {
     setInputs(prev => ({ ...prev, [field]: value }));
+  }, []);
+
+  const updateBusinessInputs = useCallback((biz: BusinessInputs) => {
+    setInputs(prev => ({ ...prev, businessInputs: biz }));
   }, []);
 
   const updateTransactions = useCallback((txns: CapitalGainTransaction[]) => {
@@ -95,7 +99,7 @@ export function TaxCalculator() {
               </div>
             </AccordionTrigger>
             <AccordionContent className="pb-4">
-              <BusinessSection inputs={inputs} update={update} />
+              <BusinessSection inputs={inputs} update={update} updateBusinessInputs={updateBusinessInputs} />
             </AccordionContent>
           </AccordionItem>
         )}
@@ -126,7 +130,7 @@ export function TaxCalculator() {
       </Accordion>
 
       <DeductionsSection inputs={inputs} update={update} />
-      <TaxPaidSection inputs={inputs} update={update} />
+      <TaxPaidSection inputs={inputs} update={update} oldResult={oldResult} newResult={newResult} />
       <ResultsComparison inputs={inputs} oldResult={oldResult} newResult={newResult} />
     </div>
   );
