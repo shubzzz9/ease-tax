@@ -1,6 +1,7 @@
 import { TaxInputs } from '@/lib/tax-types';
 import { Card, CardContent } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { User, Info } from 'lucide-react';
 
@@ -16,6 +17,23 @@ export function UserProfile({ inputs, update }: Props) {
         <div className="flex items-center gap-2 mb-4">
           <User className="h-5 w-5 text-primary" />
           <h3 className="text-lg font-semibold font-display">Your Profile</h3>
+        </div>
+
+        {/* Client Name & PAN */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-5">
+          <div>
+            <Label className="text-sm text-muted-foreground mb-1.5 block">Client Name</Label>
+            <Input placeholder="Enter name (for PDF export)" value={inputs.clientName}
+              onChange={(e) => update('clientName', e.target.value)}
+              className="bg-muted/50 border-border/50 h-9 text-sm" />
+          </div>
+          <div>
+            <Label className="text-sm text-muted-foreground mb-1.5 block">PAN</Label>
+            <Input placeholder="e.g. ABCDE1234F" value={inputs.pan}
+              onChange={(e) => update('pan', e.target.value.toUpperCase())}
+              maxLength={10}
+              className="bg-muted/50 border-border/50 h-9 text-sm uppercase" />
+          </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
