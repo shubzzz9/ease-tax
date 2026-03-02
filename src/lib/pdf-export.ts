@@ -3,7 +3,6 @@ import { formatINR } from './formatters';
 
 interface PdfOptions {
   clientName: string;
-  pan: string;
   inputs: TaxInputs;
   oldResult: TaxResult;
   newResult: TaxResult;
@@ -31,7 +30,7 @@ function singleRow(label: string, value: string, bold = false) {
 }
 
 export function generatePdfHtml(opts: PdfOptions): string {
-  const { clientName, pan, inputs, oldResult, newResult } = opts;
+  const { clientName, inputs, oldResult, newResult } = opts;
   const recommended = newResult.totalTaxLiability <= oldResult.totalTaxLiability ? 'New' : 'Old';
   const ay = 'AY 2026-27 (FY 2025-26)';
   const ageLabel = inputs.ageGroup === '80plus' ? 'Super Senior Citizen (80+)'
@@ -74,7 +73,6 @@ export function generatePdfHtml(opts: PdfOptions): string {
 <h2>Client Details</h2>
 <table class="info-table">
   <tr><td>Name</td><td>${esc(clientName || '—')}</td></tr>
-  <tr><td>PAN</td><td>${esc(pan || '—')}</td></tr>
   <tr><td>Assessment Year</td><td>${ay}</td></tr>
   <tr><td>Age Category</td><td>${ageLabel}</td></tr>
   <tr><td>Employment Type</td><td>${inputs.employmentType === 'salaried' ? 'Salaried' : inputs.employmentType === 'business' ? 'Business / Professional' : 'Both'}</td></tr>
