@@ -1,4 +1,5 @@
 export function formatINR(num: number): string {
+  if (num === undefined || num === null || isNaN(num)) num = 0;
   const abs = Math.abs(Math.round(num));
   const formatted = new Intl.NumberFormat('en-IN', {
     style: 'currency',

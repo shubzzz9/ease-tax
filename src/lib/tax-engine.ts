@@ -185,12 +185,12 @@ export function computeTax(inputs: TaxInputs, regime: 'old' | 'new'): TaxResult 
     const d80TTA = isSenior ? Math.min(inputs.sec80TTA, 50000) : Math.min(inputs.sec80TTA, 10000);
 
     // 80D: Include preventive health checkup within overall 80D limit
-    const d80DTotal = inputs.sec80D + Math.min(inputs.sec80DPreventive, 5000);
+    const d80DTotal = (inputs.sec80D || 0) + Math.min(inputs.sec80DPreventive || 0, 5000);
 
     // 80G: Adjusted Gross Total Income method
     // Eligible donation = total donation minus cash portion above ₹2,000
-    let eligible80G = inputs.sec80G;
-    const cashExcess = Math.max(0, inputs.sec80GCashDonation - 2000);
+    let eligible80G = inputs.sec80G || 0;
+    const cashExcess = Math.max(0, (inputs.sec80GCashDonation || 0) - 2000);
     eligible80G = Math.max(0, eligible80G - cashExcess);
 
     // Adjusted total income for 80G restricted categories

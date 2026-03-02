@@ -19,21 +19,12 @@ export function UserProfile({ inputs, update }: Props) {
           <h3 className="text-lg font-semibold font-display">Your Profile</h3>
         </div>
 
-        {/* Client Name & PAN */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-5">
-          <div>
-            <Label className="text-sm text-muted-foreground mb-1.5 block">Client Name</Label>
-            <Input placeholder="Enter name (for PDF export)" value={inputs.clientName}
-              onChange={(e) => update('clientName', e.target.value)}
-              className="bg-muted/50 border-border/50 h-9 text-sm" />
-          </div>
-          <div>
-            <Label className="text-sm text-muted-foreground mb-1.5 block">PAN</Label>
-            <Input placeholder="e.g. ABCDE1234F" value={inputs.pan}
-              onChange={(e) => update('pan', e.target.value.toUpperCase())}
-              maxLength={10}
-              className="bg-muted/50 border-border/50 h-9 text-sm uppercase" />
-          </div>
+        {/* Client Name (optional, for PDF) */}
+        <div className="mb-5 max-w-md">
+          <Label className="text-sm text-muted-foreground mb-1.5 block">Client Name <span className="text-xs">(optional – used in PDF export)</span></Label>
+          <Input placeholder="Enter name" value={inputs.clientName}
+            onChange={(e) => update('clientName', e.target.value)}
+            className="bg-muted/50 border-border/50 h-9 text-sm" />
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

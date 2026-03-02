@@ -74,7 +74,6 @@ export function ResultsComparison({ inputs, oldResult, newResult }: Props) {
   const handlePdf = () => {
     const success = exportPdf({
       clientName: inputs.clientName,
-      pan: inputs.pan,
       inputs,
       oldResult,
       newResult,
