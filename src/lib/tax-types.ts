@@ -51,6 +51,8 @@ export interface TaxInputs {
   returnFilingDate: string;
   dueDate: string;
   useAdvancedMode: boolean;
+  clientName: string;
+  pan: string;
 }
 
 export interface TaxResult {
@@ -109,6 +111,8 @@ export const DEFAULT_INPUTS: TaxInputs = {
   returnFilingDate: '',
   dueDate: '2026-07-31',
   useAdvancedMode: false,
+  clientName: '',
+  pan: '',
 };
 
 export const DEMO_INPUTS: TaxInputs = {
