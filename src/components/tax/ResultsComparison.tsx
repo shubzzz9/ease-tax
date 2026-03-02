@@ -94,7 +94,10 @@ export function ResultsComparison({ inputs, oldResult, newResult }: Props) {
             <BarChart3 className="h-5 w-5 text-primary" />
             <h3 className="text-lg font-semibold font-display">Tax Comparison</h3>
           </div>
-          <div className="flex gap-2 no-print">
+          <div className="flex gap-2 no-print flex-wrap">
+            <Button variant="outline" size="sm" onClick={handlePdf} className="text-xs h-8">
+              <FileText className="h-3.5 w-3.5 mr-1" /> PDF
+            </Button>
             <Button variant="outline" size="sm" onClick={handleExportCSV} className="text-xs h-8">
               <Download className="h-3.5 w-3.5 mr-1" /> CSV
             </Button>
