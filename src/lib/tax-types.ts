@@ -37,6 +37,9 @@ export interface TaxInputs {
   sec80CCD1B: number;
   sec80E: number;
   sec80G: number;
+  sec80GType: '100' | '50' | '100_restricted' | '50_restricted';
+  sec80GCashDonation: number;
+  sec80DPreventive: number;
   sec80TTA: number;
   sec80U: number;
   otherDeductions: number;
@@ -98,7 +101,8 @@ export const DEFAULT_INPUTS: TaxInputs = {
   bfCapitalLossSTCG: 0, bfCapitalLossLTCG: 0,
   fdInterest: 0, savingsInterest: 0, dividend: 0, familyPension: 0,
   agriculturalIncome: 0, otherIncome: 0,
-  sec80C: 0, sec80D: 0, sec80CCD1B: 0, sec80E: 0, sec80G: 0,
+  sec80C: 0, sec80D: 0, sec80DPreventive: 0, sec80CCD1B: 0, sec80E: 0, sec80G: 0,
+  sec80GType: '100' as const, sec80GCashDonation: 0,
   sec80TTA: 0, sec80U: 0, otherDeductions: 0,
   tds: 0, advanceTax: 0, selfAssessmentTax: 0,
   advanceTaxInstallments: [],
