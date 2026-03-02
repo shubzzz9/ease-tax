@@ -183,8 +183,38 @@ export function computeTax(inputs: TaxInputs, regime: 'old' | 'new'): TaxResult 
     const d80CCD1B = Math.min(inputs.sec80CCD1B, 50000);
     const isSenior = inputs.ageGroup !== 'below60';
     const d80TTA = isSenior ? Math.min(inputs.sec80TTA, 50000) : Math.min(inputs.sec80TTA, 10000);
-    totalDeductions = d80C + inputs.sec80D + d80CCD1B + inputs.sec80E
-      + inputs.sec80G + d80TTA + inputs.sec80U + inputs.otherDeductions;
+
+    // 80D: Include preventive health checkup within overall 80D limit
+    const d80DTotal = inputs.sec80D + Math.min(inputs.sec80DPreventive, 5000);
+
+    // 80G: Adjusted Gross Total Income method
+    // Eligible donation = total donation minus cash portion above ₹2,000
+    let eligible80G = inputs.sec80G;
+    const cashExcess = Math.max(0, inputs.sec80GCashDonation - 2000);
+    eligible80G = Math.max(0, eligible80G - cashExcess);
+
+    // Adjusted total income for 80G restricted categories
+    const adjustedTotalIncome = grossTotalIncome - d80C - d80CCD1B - inputs.sec80D
+      - inputs.sec80E - d80TTA - inputs.sec80U - inputs.otherDeductions;
+
+    let d80G = 0;
+    switch (inputs.sec80GType) {
+      case '100':
+        d80G = eligible80G;
+        break;
+      case '50':
+        d80G = eligible80G * 0.5;
+        break;
+      case '100_restricted':
+        d80G = Math.min(eligible80G, adjustedTotalIncome * 0.10);
+        break;
+      case '50_restricted':
+        d80G = Math.min(eligible80G * 0.5, adjustedTotalIncome * 0.10);
+        break;
+    }
+
+    totalDeductions = d80C + d80DTotal + d80CCD1B + inputs.sec80E
+      + d80G + d80TTA + inputs.sec80U + inputs.otherDeductions;
   }
 
   // 8. TAXABLE INCOME
