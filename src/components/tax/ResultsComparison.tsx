@@ -1,9 +1,10 @@
 import { TaxInputs, TaxResult } from '@/lib/tax-types';
 import { formatINR } from '@/lib/formatters';
+import { exportPdf } from '@/lib/pdf-export';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
-import { BarChart3, Download, Share2, Printer, AlertTriangle } from 'lucide-react';
+import { BarChart3, Download, Share2, Printer, AlertTriangle, FileText } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 interface Props {
@@ -69,6 +70,21 @@ export function ResultsComparison({ inputs, oldResult, newResult }: Props) {
   };
 
   const handlePrint = () => window.print();
+
+  const handlePdf = () => {
+    const success = exportPdf({
+      clientName: inputs.clientName,
+      pan: inputs.pan,
+      inputs,
+      oldResult,
+      newResult,
+    });
+    if (success) {
+      toast({ title: 'PDF opened in new tab. Use Print → Save as PDF.' });
+    } else {
+      toast({ title: 'Pop-up blocked. Please allow pop-ups.', variant: 'destructive' });
+    }
+  };
 
   return (
     <Card className="border-border/50 bg-card/80">
