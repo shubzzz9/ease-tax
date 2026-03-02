@@ -17,9 +17,9 @@ interface Props {
 
 const TAXATION_OPTIONS: { value: BusinessTaxationType; label: string; tooltip: string }[] = [
   { value: 'regular', label: 'Regular Business', tooltip: 'Normal computation under Sections 28–37 with books of accounts' },
-  { value: 'presumptive44AD', label: 'Small Business (Simplified)', tooltip: 'Presumptive taxation under Section 44AD for businesses with turnover up to statutory limit' },
-  { value: 'presumptive44ADA', label: 'Professional (Simplified)', tooltip: 'Presumptive taxation under Section 44ADA for professionals with receipts up to ₹75 Lakh' },
-  { value: 'presumptive44AE', label: 'Goods Transport', tooltip: 'Presumptive taxation under Section 44AE for goods carriage operators' },
+  { value: 'presumptive44AD', label: 'Presumptive Income (44AD)', tooltip: 'Presumptive taxation under Section 44AD for businesses with turnover up to statutory limit' },
+  { value: 'presumptive44ADA', label: 'Presumptive Income (44ADA)', tooltip: 'Presumptive taxation under Section 44ADA for professionals with receipts up to ₹75 Lakh' },
+  { value: 'presumptive44AE', label: 'Presumptive Income (44AE)', tooltip: 'Presumptive taxation under Section 44AE for goods carriage operators' },
 ];
 
 export function BusinessSection({ inputs, update, updateBusinessInputs }: Props) {

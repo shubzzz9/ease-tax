@@ -34,10 +34,13 @@ const Index = () => {
 
       {/* Footer */}
       <footer className="border-t border-border/50 py-4 no-print">
-        <div className="container text-center">
+        <div className="container text-center space-y-1">
           <p className="text-xs text-muted-foreground">
             © {new Date().getFullYear()} G S Mundada & Co. • This calculator is for estimation purposes only.
             Please consult your CA for final tax computation.
+          </p>
+          <p className="text-[10px] text-muted-foreground/60">
+            Made by Lovable – shubhamlunawat98@gmail.com
           </p>
         </div>
       </footer>
