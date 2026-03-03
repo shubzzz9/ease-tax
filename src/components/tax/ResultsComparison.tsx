@@ -13,13 +13,13 @@ interface Props {
   newResult: TaxResult;
 }
 
-function Row({ label, old, new: nw, highlight }: { label: string; old: number; new: number; highlight?: boolean }) {
-  const lower = Math.min(old, nw);
+function Row({ label, old, new: nw, highlight, recommendedRegime }: { label: string; old: number; new: number; highlight?: boolean; recommendedRegime: 'Old' | 'New' }) {
+  const isOldRecommended = recommendedRegime === 'Old';
   return (
-    <div className={`grid grid-cols-3 gap-2 py-1.5 px-2 rounded text-sm ${highlight ? 'bg-primary/10 font-semibold' : ''}`}>
+    <div className={`grid grid-cols-3 gap-2 py-1.5 px-2 rounded text-sm ${highlight ? 'font-semibold' : ''}`}>
       <span className="text-muted-foreground text-xs sm:text-sm">{label}</span>
-      <span className={`text-right ${old === lower && old !== nw ? 'text-primary' : ''}`}>{formatINR(old)}</span>
-      <span className={`text-right ${nw === lower && old !== nw ? 'text-primary' : ''}`}>{formatINR(nw)}</span>
+      <span className={`text-right ${isOldRecommended && highlight ? 'text-green-700 dark:text-green-400' : ''}`}>{formatINR(old)}</span>
+      <span className={`text-right ${!isOldRecommended && highlight ? 'text-green-700 dark:text-green-400' : ''}`}>{formatINR(nw)}</span>
     </div>
   );
 }
