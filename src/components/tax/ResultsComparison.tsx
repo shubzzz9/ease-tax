@@ -18,8 +18,8 @@ function Row({ label, old, new: nw, highlight, recommendedRegime }: { label: str
   return (
     <div className={`grid grid-cols-3 gap-2 py-1.5 px-2 rounded text-sm ${highlight ? 'font-semibold' : ''}`}>
       <span className="text-muted-foreground text-xs sm:text-sm">{label}</span>
-      <span className={`text-right ${isOldRec ? 'text-green-700 dark:text-green-400' : ''}`}>{formatINR(old)}</span>
-      <span className={`text-right ${!isOldRec ? 'text-green-700 dark:text-green-400' : ''}`}>{formatINR(nw)}</span>
+      <span className={`text-right ${isOldRec ? 'bg-green-100/60 dark:bg-green-900/30 rounded px-1' : ''}`}>{formatINR(old)}</span>
+      <span className={`text-right ${!isOldRec ? 'bg-green-100/60 dark:bg-green-900/30 rounded px-1' : ''}`}>{formatINR(nw)}</span>
     </div>
   );
 }
@@ -87,6 +87,10 @@ export function ResultsComparison({ inputs, oldResult, newResult }: Props) {
 
   const isOldRec = recommended === 'Old';
 
+  // Glow style for recommended column header
+  const glowStyle = 'text-green-700 dark:text-green-400 font-bold';
+  const glowBg = 'bg-green-100 dark:bg-green-900/40 shadow-[0_0_12px_2px_rgba(34,197,94,0.3)] dark:shadow-[0_0_12px_2px_rgba(74,222,128,0.25)]';
+
   return (
     <Card className="border-border/50 bg-card/80">
       <CardContent className="pt-5 pb-5">
@@ -111,10 +115,14 @@ export function ResultsComparison({ inputs, oldResult, newResult }: Props) {
           </div>
         </div>
 
-        <div className="grid grid-cols-3 gap-2 py-2 px-2 rounded bg-muted/50 mb-2">
+        <div className="grid grid-cols-3 gap-2 py-2 px-2 rounded mb-2">
           <span className="text-xs font-medium text-muted-foreground">Particulars</span>
-          <span className={`text-xs font-medium text-right ${isOldRec ? 'text-green-700 dark:text-green-400 font-bold' : 'text-muted-foreground'}`}>Old Regime {isOldRec ? '✓' : ''}</span>
-          <span className={`text-xs font-medium text-right ${!isOldRec ? 'text-green-700 dark:text-green-400 font-bold' : 'text-muted-foreground'}`}>New Regime {!isOldRec ? '✓' : ''}</span>
+          <span className={`text-xs font-medium text-right py-1 px-2 rounded-md transition-all ${isOldRec ? `${glowStyle} ${glowBg}` : 'text-muted-foreground'}`}>
+            Old Regime {isOldRec ? '✓' : ''}
+          </span>
+          <span className={`text-xs font-medium text-right py-1 px-2 rounded-md transition-all ${!isOldRec ? `${glowStyle} ${glowBg}` : 'text-muted-foreground'}`}>
+            New Regime {!isOldRec ? '✓' : ''}
+          </span>
         </div>
 
         <div className="space-y-0.5">
@@ -162,9 +170,13 @@ export function ResultsComparison({ inputs, oldResult, newResult }: Props) {
           />
         </div>
 
-        <div className="mt-4 flex items-center justify-center gap-2 py-3 px-4 rounded-lg gold-gradient">
-          <span className="text-sm font-bold text-primary-foreground">
-            ✨ Recommended Regime: {recommended} Regime
+        <div className={`mt-4 flex items-center justify-center gap-2 py-3 px-4 rounded-lg transition-all ${
+          isOldRec 
+            ? 'bg-green-100 dark:bg-green-900/40 border border-green-300 dark:border-green-700 shadow-[0_0_20px_4px_rgba(34,197,94,0.25)] dark:shadow-[0_0_20px_4px_rgba(74,222,128,0.2)]'
+            : 'bg-green-100 dark:bg-green-900/40 border border-green-300 dark:border-green-700 shadow-[0_0_20px_4px_rgba(34,197,94,0.25)] dark:shadow-[0_0_20px_4px_rgba(74,222,128,0.2)]'
+        }`}>
+          <span className="text-sm font-bold text-green-800 dark:text-green-300">
+            ✨ Recommended Regime: {recommended} Regime — You save {formatINR(Math.abs(oldResult.totalTaxLiability - newResult.totalTaxLiability))}
           </span>
         </div>
 
