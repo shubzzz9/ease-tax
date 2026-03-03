@@ -14,40 +14,26 @@ interface Props {
 }
 
 function Row({ label, old, new: nw, highlight, recommendedRegime }: { label: string; old: number; new: number; highlight?: boolean; recommendedRegime: 'Old' | 'New' }) {
-  const isOldRecommended = recommendedRegime === 'Old';
+  const isOldRec = recommendedRegime === 'Old';
   return (
     <div className={`grid grid-cols-3 gap-2 py-1.5 px-2 rounded text-sm ${highlight ? 'font-semibold' : ''}`}>
       <span className="text-muted-foreground text-xs sm:text-sm">{label}</span>
-      <span className={`text-right ${isOldRecommended && highlight ? 'text-green-700 dark:text-green-400' : ''}`}>{formatINR(old)}</span>
-      <span className={`text-right ${!isOldRecommended && highlight ? 'text-green-700 dark:text-green-400' : ''}`}>{formatINR(nw)}</span>
+      <span className={`text-right ${isOldRec ? 'text-green-700 dark:text-green-400' : ''}`}>{formatINR(old)}</span>
+      <span className={`text-right ${!isOldRec ? 'text-green-700 dark:text-green-400' : ''}`}>{formatINR(nw)}</span>
     </div>
   );
 }
 
 export function ResultsComparison({ inputs, oldResult, newResult }: Props) {
   const { toast } = useToast();
-  const recommended = newResult.totalTaxLiability <= oldResult.totalTaxLiability ? 'New' : 'Old';
+  const recommended: 'Old' | 'New' = newResult.totalTaxLiability <= oldResult.totalTaxLiability ? 'New' : 'Old';
 
   const allWarnings = [...new Set([...oldResult.warnings, ...newResult.warnings])];
 
   const handleExportCSV = () => {
     const rows = [
       ['Particulars', 'Old Regime', 'New Regime'],
-      ['Gross Total Income', oldResult.grossTotalIncome, newResult.grossTotalIncome],
-      ['Total Deductions', oldResult.totalDeductions, newResult.totalDeductions],
-      ['Taxable Income', oldResult.totalTaxableIncome, newResult.totalTaxableIncome],
-      ['Tax on Normal Income', oldResult.taxOnNormalIncome, newResult.taxOnNormalIncome],
-      ['Tax on Capital Gains', oldResult.taxOnSpecialIncome, newResult.taxOnSpecialIncome],
-      ['Rebate 87A', oldResult.rebate87A, newResult.rebate87A],
-      ['Surcharge', oldResult.surcharge, newResult.surcharge],
-      ['Cess', oldResult.cess, newResult.cess],
-      ['Total Tax', oldResult.totalTaxLiability, newResult.totalTaxLiability],
-      ['Interest 234A', oldResult.interest234A, newResult.interest234A],
-      ['Interest 234B', oldResult.interest234B, newResult.interest234B],
-      ['Interest 234C', oldResult.interest234C, newResult.interest234C],
-      ['Total Interest', oldResult.totalInterest, newResult.totalInterest],
-      ['Tax Paid', oldResult.taxPaid, newResult.taxPaid],
-      ['Total Amount Payable', oldResult.totalAmountPayable, newResult.totalAmountPayable],
+...
     ];
     const csv = rows.map(r => r.join(',')).join('\n');
     const blob = new Blob([csv], { type: 'text/csv' });
@@ -85,6 +71,8 @@ export function ResultsComparison({ inputs, oldResult, newResult }: Props) {
     }
   };
 
+  const isOldRec = recommended === 'Old';
+
   return (
     <Card className="border-border/50 bg-card/80">
       <CardContent className="pt-5 pb-5">
@@ -111,52 +99,52 @@ export function ResultsComparison({ inputs, oldResult, newResult }: Props) {
 
         <div className="grid grid-cols-3 gap-2 py-2 px-2 rounded bg-muted/50 mb-2">
           <span className="text-xs font-medium text-muted-foreground">Particulars</span>
-          <span className="text-xs font-medium text-right text-muted-foreground">Old Regime</span>
-          <span className="text-xs font-medium text-right text-muted-foreground">New Regime</span>
+          <span className={`text-xs font-medium text-right ${isOldRec ? 'text-green-700 dark:text-green-400 font-bold' : 'text-muted-foreground'}`}>Old Regime {isOldRec ? '✓' : ''}</span>
+          <span className={`text-xs font-medium text-right ${!isOldRec ? 'text-green-700 dark:text-green-400 font-bold' : 'text-muted-foreground'}`}>New Regime {!isOldRec ? '✓' : ''}</span>
         </div>
 
         <div className="space-y-0.5">
-          <Row label="Gross Total Income" old={oldResult.grossTotalIncome} new={newResult.grossTotalIncome} />
-          <Row label="Total Deductions" old={oldResult.totalDeductions} new={newResult.totalDeductions} />
+          <Row label="Gross Total Income" old={oldResult.grossTotalIncome} new={newResult.grossTotalIncome} recommendedRegime={recommended} />
+          <Row label="Total Deductions" old={oldResult.totalDeductions} new={newResult.totalDeductions} recommendedRegime={recommended} />
           <Separator className="my-1 bg-border/50" />
-          <Row label="Taxable Income" old={oldResult.totalTaxableIncome} new={newResult.totalTaxableIncome} highlight />
-          <Row label="Tax on Salary & Other Income" old={oldResult.taxOnNormalIncome} new={newResult.taxOnNormalIncome} />
-          <Row label="Tax on Capital Gains" old={oldResult.taxOnSpecialIncome} new={newResult.taxOnSpecialIncome} />
-          <Row label="Less: Rebate u/s 87A" old={oldResult.rebate87A} new={newResult.rebate87A} />
+          <Row label="Taxable Income" old={oldResult.totalTaxableIncome} new={newResult.totalTaxableIncome} highlight recommendedRegime={recommended} />
+          <Row label="Tax on Salary & Other Income" old={oldResult.taxOnNormalIncome} new={newResult.taxOnNormalIncome} recommendedRegime={recommended} />
+          <Row label="Tax on Capital Gains" old={oldResult.taxOnSpecialIncome} new={newResult.taxOnSpecialIncome} recommendedRegime={recommended} />
+          <Row label="Less: Rebate u/s 87A" old={oldResult.rebate87A} new={newResult.rebate87A} recommendedRegime={recommended} />
           <Separator className="my-1 bg-border/50" />
-          <Row label="Tax After Rebate" old={oldResult.totalTaxBeforeSurcharge} new={newResult.totalTaxBeforeSurcharge} />
-          <Row label="Surcharge" old={oldResult.surcharge} new={newResult.surcharge} />
+          <Row label="Tax After Rebate" old={oldResult.totalTaxBeforeSurcharge} new={newResult.totalTaxBeforeSurcharge} recommendedRegime={recommended} />
+          <Row label="Surcharge" old={oldResult.surcharge} new={newResult.surcharge} recommendedRegime={recommended} />
           {(oldResult.marginalRelief > 0 || newResult.marginalRelief > 0) && (
-            <Row label="Marginal Relief" old={oldResult.marginalRelief} new={newResult.marginalRelief} />
+            <Row label="Marginal Relief" old={oldResult.marginalRelief} new={newResult.marginalRelief} recommendedRegime={recommended} />
           )}
-          <Row label="Health & Education Cess (4%)" old={oldResult.cess} new={newResult.cess} />
+          <Row label="Health & Education Cess (4%)" old={oldResult.cess} new={newResult.cess} recommendedRegime={recommended} />
           <Separator className="my-1 bg-border/50" />
-          <Row label="TOTAL TAX LIABILITY" old={oldResult.totalTaxLiability} new={newResult.totalTaxLiability} highlight />
+          <Row label="TOTAL TAX LIABILITY" old={oldResult.totalTaxLiability} new={newResult.totalTaxLiability} highlight recommendedRegime={recommended} />
 
-          {/* Interest rows */}
           {(oldResult.totalInterest > 0 || newResult.totalInterest > 0) && (
             <>
               <Separator className="my-1 bg-border/50" />
               {(oldResult.interest234A > 0 || newResult.interest234A > 0) && (
-                <Row label="Interest – Late Filing" old={oldResult.interest234A} new={newResult.interest234A} />
+                <Row label="Interest – Late Filing" old={oldResult.interest234A} new={newResult.interest234A} recommendedRegime={recommended} />
               )}
               {(oldResult.interest234B > 0 || newResult.interest234B > 0) && (
-                <Row label="Interest – Advance Tax Shortfall" old={oldResult.interest234B} new={newResult.interest234B} />
+                <Row label="Interest – Advance Tax Shortfall" old={oldResult.interest234B} new={newResult.interest234B} recommendedRegime={recommended} />
               )}
               {(oldResult.interest234C > 0 || newResult.interest234C > 0) && (
-                <Row label="Interest – Delayed Payment" old={oldResult.interest234C} new={newResult.interest234C} />
+                <Row label="Interest – Delayed Payment" old={oldResult.interest234C} new={newResult.interest234C} recommendedRegime={recommended} />
               )}
-              <Row label="Total Interest" old={oldResult.totalInterest} new={newResult.totalInterest} />
+              <Row label="Total Interest" old={oldResult.totalInterest} new={newResult.totalInterest} recommendedRegime={recommended} />
             </>
           )}
 
-          <Row label="Less: Tax Already Paid" old={oldResult.taxPaid} new={newResult.taxPaid} />
+          <Row label="Less: Tax Already Paid" old={oldResult.taxPaid} new={newResult.taxPaid} recommendedRegime={recommended} />
           <Separator className="my-1 bg-border/50" />
           <Row
             label={oldResult.totalAmountPayable >= 0 ? "TOTAL AMOUNT PAYABLE" : "REFUND DUE"}
             old={oldResult.totalAmountPayable}
             new={newResult.totalAmountPayable}
             highlight
+            recommendedRegime={recommended}
           />
         </div>
 
