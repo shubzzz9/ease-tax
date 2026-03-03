@@ -4,8 +4,9 @@ import { HelpTooltip } from './HelpTooltip';
 import { Card, CardContent } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
-import { PiggyBank, Info, AlertTriangle, Heart } from 'lucide-react';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import { PiggyBank, Info, AlertTriangle, ChevronDown } from 'lucide-react';
+import { useState } from 'react';
 
 interface Props {
   inputs: TaxInputs;
@@ -13,6 +14,7 @@ interface Props {
 }
 
 export function DeductionsSection({ inputs, update }: Props) {
+  const [open, setOpen] = useState(false);
   const warnings: string[] = [];
 
   if (inputs.sec80GCashDonation > 2000) {
@@ -26,72 +28,65 @@ export function DeductionsSection({ inputs, update }: Props) {
   return (
     <Card className="border-border/50 bg-card/80">
       <CardContent className="pt-5 pb-5">
-        <div className="flex items-center gap-2 mb-1">
-          <PiggyBank className="h-5 w-5 text-primary" />
-          <h3 className="text-lg font-semibold font-display">Tax Saving Investments & Deductions</h3>
-        </div>
-        <p className="text-xs text-muted-foreground mb-4">Chapter VI-A deductions — applicable under Old Regime only</p>
-
-        <div className="flex items-start gap-2 p-3 rounded-lg bg-primary/5 border border-primary/20 mb-4">
-          <Info className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
-          <p className="text-xs text-muted-foreground">
-            Most deductions are <strong>not allowed</strong> under New Regime. These values are used only for Old Regime comparison.
-          </p>
-        </div>
-
-        <Accordion type="multiple" defaultValue={['investments']} className="space-y-2">
-          <AccordionItem value="investments" className="border border-border/50 rounded-lg bg-muted/10 px-4">
-            <AccordionTrigger className="hover:no-underline py-3">
-              <div className="flex items-center gap-2 text-sm font-medium">
-                <PiggyBank className="h-4 w-4 text-primary" />
-                Tax Saving Investments (80C, 80D, 80E etc.)
+        <Collapsible open={open} onOpenChange={setOpen}>
+          <CollapsibleTrigger className="flex items-center justify-between w-full">
+            <div>
+              <div className="flex items-center gap-2 mb-1">
+                <PiggyBank className="h-5 w-5 text-primary" />
+                <h3 className="text-lg font-semibold font-display">Tax Saving Investments & Deductions</h3>
               </div>
-            </AccordionTrigger>
-            <AccordionContent className="pb-4">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <CurrencyInput label="Section 80C (PF, LIC, ELSS etc.)" value={inputs.sec80C}
-                  onChange={(v) => update('sec80C', v)} max={150000}
-                  tooltip="Investments in PF, PPF, LIC, ELSS, tuition fees etc. Max ₹1,50,000" />
+              <p className="text-xs text-muted-foreground text-left">Chapter VI-A deductions — applicable under Old Regime only</p>
+            </div>
+            <ChevronDown className={`h-5 w-5 text-muted-foreground transition-transform duration-200 ${open ? 'rotate-180' : ''}`} />
+          </CollapsibleTrigger>
 
-                <CurrencyInput label="Section 80D (Medical Insurance)" value={inputs.sec80D}
-                  onChange={(v) => update('sec80D', v)}
-                  tooltip="Health insurance premium. Up to ₹25,000 (₹50,000 for senior citizens) for self + family. Includes preventive health check-up." />
+          <CollapsibleContent className="mt-4 space-y-4">
+            <div className="flex items-start gap-2 p-3 rounded-lg bg-primary/5 border border-primary/20">
+              <Info className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
+              <p className="text-xs text-muted-foreground">
+                Most deductions are <strong>not allowed</strong> under New Regime. These values are used only for Old Regime comparison.
+              </p>
+            </div>
 
-                <CurrencyInput label="80D – Preventive Health Check-up" value={inputs.sec80DPreventive}
-                  onChange={(v) => update('sec80DPreventive', v)} max={5000}
-                  tooltip="Preventive health check-up expenses. Max ₹5,000 (included within 80D limit, not additional)." />
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <CurrencyInput label="Section 80C (PF, LIC, ELSS etc.)" value={inputs.sec80C}
+                onChange={(v) => update('sec80C', v)} max={150000}
+                tooltip="Investments in PF, PPF, LIC, ELSS, tuition fees etc. Max ₹1,50,000" />
 
-                <CurrencyInput label="Section 80CCD(1B) (NPS Extra)" value={inputs.sec80CCD1B}
-                  onChange={(v) => update('sec80CCD1B', v)} max={50000}
-                  tooltip="Additional NPS contribution. Max ₹50,000 over and above 80C limit." />
+              <CurrencyInput label="Section 80D (Medical Insurance)" value={inputs.sec80D}
+                onChange={(v) => update('sec80D', v)}
+                tooltip="Health insurance premium. Up to ₹25,000 (₹50,000 for senior citizens) for self + family." />
 
-                <CurrencyInput label="Section 80E (Education Loan Interest)" value={inputs.sec80E}
-                  onChange={(v) => update('sec80E', v)}
-                  tooltip="Interest on education loan. No upper limit. Available for 8 years." />
+              <CurrencyInput label="80D – Preventive Health Check-up" value={inputs.sec80DPreventive}
+                onChange={(v) => update('sec80DPreventive', v)} max={5000}
+                tooltip="Preventive health check-up expenses. Max ₹5,000 (included within 80D limit, not additional)." />
 
-                <CurrencyInput label="Section 80TTA / 80TTB" value={inputs.sec80TTA}
-                  onChange={(v) => update('sec80TTA', v)}
-                  tooltip="Savings interest deduction. 80TTA: max ₹10,000. 80TTB (senior): max ₹50,000." />
+              <CurrencyInput label="Section 80CCD(1B) (NPS Extra)" value={inputs.sec80CCD1B}
+                onChange={(v) => update('sec80CCD1B', v)} max={50000}
+                tooltip="Additional NPS contribution. Max ₹50,000 over and above 80C limit." />
 
-                <CurrencyInput label="Section 80U (Disability)" value={inputs.sec80U}
-                  onChange={(v) => update('sec80U', v)}
-                  tooltip="Deduction for person with disability. ₹75,000 or ₹1,25,000 for severe." />
+              <CurrencyInput label="Section 80E (Education Loan Interest)" value={inputs.sec80E}
+                onChange={(v) => update('sec80E', v)}
+                tooltip="Interest on education loan. No upper limit. Available for 8 years." />
 
-                <CurrencyInput label="Other Deductions" value={inputs.otherDeductions}
-                  onChange={(v) => update('otherDeductions', v)}
-                  tooltip="Any other eligible deductions under Chapter VI-A" />
-              </div>
-            </AccordionContent>
-          </AccordionItem>
+              <CurrencyInput label="Section 80TTA / 80TTB" value={inputs.sec80TTA}
+                onChange={(v) => update('sec80TTA', v)}
+                tooltip="Savings interest deduction. 80TTA: max ₹10,000. 80TTB (senior): max ₹50,000." />
 
-          <AccordionItem value="donations" className="border border-border/50 rounded-lg bg-muted/10 px-4">
-            <AccordionTrigger className="hover:no-underline py-3">
-              <div className="flex items-center gap-2 text-sm font-medium">
-                <Heart className="h-4 w-4 text-primary" />
-                Donations (Section 80G)
-              </div>
-            </AccordionTrigger>
-            <AccordionContent className="pb-4">
+              <CurrencyInput label="Section 80U (Disability)" value={inputs.sec80U}
+                onChange={(v) => update('sec80U', v)}
+                tooltip="Deduction for person with disability. ₹75,000 or ₹1,25,000 for severe." />
+
+              <CurrencyInput label="Other Deductions" value={inputs.otherDeductions}
+                onChange={(v) => update('otherDeductions', v)}
+                tooltip="Any other eligible deductions under Chapter VI-A" />
+            </div>
+
+            {/* 80G Donations */}
+            <div className="border-t border-border/50 pt-4">
+              <h4 className="text-sm font-medium mb-3 flex items-center gap-2">
+                <span>Donations (Section 80G)</span>
+              </h4>
               <div className="space-y-3">
                 <div>
                   <div className="flex items-center gap-1.5 mb-2">
@@ -131,20 +126,20 @@ export function DeductionsSection({ inputs, update }: Props) {
                     tooltip="Cash donations above ₹2,000 are not eligible for 80G deduction." />
                 </div>
               </div>
-            </AccordionContent>
-          </AccordionItem>
-        </Accordion>
+            </div>
 
-        {warnings.length > 0 && (
-          <div className="mt-4 space-y-1.5">
-            {warnings.map((w, i) => (
-              <div key={i} className="flex items-start gap-2 text-xs text-destructive">
-                <AlertTriangle className="h-3.5 w-3.5 mt-0.5 flex-shrink-0" />
-                <span>{w}</span>
+            {warnings.length > 0 && (
+              <div className="space-y-1.5">
+                {warnings.map((w, i) => (
+                  <div key={i} className="flex items-start gap-2 text-xs text-destructive">
+                    <AlertTriangle className="h-3.5 w-3.5 mt-0.5 flex-shrink-0" />
+                    <span>{w}</span>
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
-        )}
+            )}
+          </CollapsibleContent>
+        </Collapsible>
       </CardContent>
     </Card>
   );

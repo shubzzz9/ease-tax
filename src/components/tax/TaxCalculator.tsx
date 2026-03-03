@@ -95,7 +95,7 @@ export function TaxCalculator() {
             <AccordionTrigger className="hover:no-underline py-3">
               <div className="flex items-center gap-2 text-sm font-medium">
                 <Building2 className="h-4 w-4 text-primary" />
-                Business / Freelance Income
+                Income from Business / Profession
               </div>
             </AccordionTrigger>
             <AccordionContent className="pb-4">
