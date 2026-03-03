@@ -33,7 +33,21 @@ export function ResultsComparison({ inputs, oldResult, newResult }: Props) {
   const handleExportCSV = () => {
     const rows = [
       ['Particulars', 'Old Regime', 'New Regime'],
-...
+      ['Gross Total Income', oldResult.grossTotalIncome, newResult.grossTotalIncome],
+      ['Total Deductions', oldResult.totalDeductions, newResult.totalDeductions],
+      ['Taxable Income', oldResult.totalTaxableIncome, newResult.totalTaxableIncome],
+      ['Tax on Normal Income', oldResult.taxOnNormalIncome, newResult.taxOnNormalIncome],
+      ['Tax on Capital Gains', oldResult.taxOnSpecialIncome, newResult.taxOnSpecialIncome],
+      ['Rebate 87A', oldResult.rebate87A, newResult.rebate87A],
+      ['Surcharge', oldResult.surcharge, newResult.surcharge],
+      ['Cess', oldResult.cess, newResult.cess],
+      ['Total Tax', oldResult.totalTaxLiability, newResult.totalTaxLiability],
+      ['Interest 234A', oldResult.interest234A, newResult.interest234A],
+      ['Interest 234B', oldResult.interest234B, newResult.interest234B],
+      ['Interest 234C', oldResult.interest234C, newResult.interest234C],
+      ['Total Interest', oldResult.totalInterest, newResult.totalInterest],
+      ['Tax Paid', oldResult.taxPaid, newResult.taxPaid],
+      ['Total Amount Payable', oldResult.totalAmountPayable, newResult.totalAmountPayable],
     ];
     const csv = rows.map(r => r.join(',')).join('\n');
     const blob = new Blob([csv], { type: 'text/csv' });
