@@ -1,4 +1,5 @@
 import { TaxCalculator } from '@/components/tax/TaxCalculator';
+import { InstallPrompt } from '@/components/InstallPrompt';
 import { Calculator } from 'lucide-react';
 
 const Index = () => {
