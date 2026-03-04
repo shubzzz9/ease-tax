@@ -1,4 +1,4 @@
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { HelpCircle } from 'lucide-react';
 
 interface Props {
@@ -7,15 +7,15 @@ interface Props {
 
 export function HelpTooltip({ text }: Props) {
   return (
-    <Tooltip>
-      <TooltipTrigger asChild>
+    <Popover>
+      <PopoverTrigger asChild>
         <button type="button" className="inline-flex items-center justify-center rounded-full text-muted-foreground hover:text-primary transition-colors">
           <HelpCircle className="h-3.5 w-3.5" />
         </button>
-      </TooltipTrigger>
-      <TooltipContent side="top" className="max-w-xs text-xs bg-popover border-border">
+      </PopoverTrigger>
+      <PopoverContent side="top" className="max-w-xs text-xs bg-popover border-border p-2 w-auto">
         {text}
-      </TooltipContent>
-    </Tooltip>
+      </PopoverContent>
+    </Popover>
   );
 }
