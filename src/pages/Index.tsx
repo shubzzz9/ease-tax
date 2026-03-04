@@ -45,6 +45,7 @@ const Index = () => {
           </p>
         </div>
       </footer>
+      <InstallPrompt />
     </div>
   );
 };
