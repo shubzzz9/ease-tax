@@ -67,7 +67,7 @@ export function TaxCalculator() {
         {showSalary && (
           <AccordionItem value="salary" className="border border-border/50 rounded-lg bg-card/80 px-4">
             <AccordionTrigger className="hover:no-underline py-3">
-              <div className="flex items-center gap-2 text-sm font-medium">
+              <div className="flex items-center gap-2 text-sm font-bold">
                 <Briefcase className="h-4 w-4 text-primary" />
                 Income from Salary
               </div>
@@ -80,9 +80,9 @@ export function TaxCalculator() {
 
         <AccordionItem value="property" className="border border-border/50 rounded-lg bg-card/80 px-4">
           <AccordionTrigger className="hover:no-underline py-3">
-            <div className="flex items-center gap-2 text-sm font-medium">
-              <Home className="h-4 w-4 text-primary" />
-              Income from House Property
+              <div className="flex items-center gap-2 text-sm font-bold">
+                <Home className="h-4 w-4 text-primary" />
+                Income from House Property
             </div>
           </AccordionTrigger>
           <AccordionContent className="pb-4">
@@ -93,7 +93,7 @@ export function TaxCalculator() {
         {showBusiness && (
           <AccordionItem value="business" className="border border-border/50 rounded-lg bg-card/80 px-4">
             <AccordionTrigger className="hover:no-underline py-3">
-              <div className="flex items-center gap-2 text-sm font-medium">
+              <div className="flex items-center gap-2 text-sm font-bold">
                 <Building2 className="h-4 w-4 text-primary" />
                 Income from Business / Profession
               </div>
@@ -106,9 +106,9 @@ export function TaxCalculator() {
 
         <AccordionItem value="capitalgains" className="border border-border/50 rounded-lg bg-card/80 px-4">
           <AccordionTrigger className="hover:no-underline py-3">
-            <div className="flex items-center gap-2 text-sm font-medium">
-              <TrendingUp className="h-4 w-4 text-primary" />
-              Income from Shares / Property / Mutual Funds
+              <div className="flex items-center gap-2 text-sm font-bold">
+                <TrendingUp className="h-4 w-4 text-primary" />
+                Income from Shares / Property / Mutual Funds
             </div>
           </AccordionTrigger>
           <AccordionContent className="pb-4">
@@ -118,9 +118,9 @@ export function TaxCalculator() {
 
         <AccordionItem value="other" className="border border-border/50 rounded-lg bg-card/80 px-4">
           <AccordionTrigger className="hover:no-underline py-3">
-            <div className="flex items-center gap-2 text-sm font-medium">
-              <Wallet className="h-4 w-4 text-primary" />
-              Other Income
+              <div className="flex items-center gap-2 text-sm font-bold">
+                <Wallet className="h-4 w-4 text-primary" />
+                Other Income
             </div>
           </AccordionTrigger>
           <AccordionContent className="pb-4">
