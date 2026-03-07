@@ -62,7 +62,8 @@ export function generatePdfHtml(opts: PdfOptions): string {
 <div class="header">
   <div>
     <h1 class="firm">G S Mundada & Co.</h1>
-    <div style="font-size:10px;color:#666;">Chartered Accountants</div>
+    <div style="font-size:11px;font-weight:bold;color:#0B3C5D;">CA Dr. Akash Mundada</div>
+    <div style="font-size:10px;color:#666;">Chartered Accountants | Office: 7020591108</div>
   </div>
   <div style="text-align:right;">
     <div style="font-size:13px;font-weight:bold;color:#0B3C5D;">INCOME TAX COMPUTATION</div>
