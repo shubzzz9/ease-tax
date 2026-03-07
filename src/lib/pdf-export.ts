@@ -62,7 +62,8 @@ export function generatePdfHtml(opts: PdfOptions): string {
 <div class="header">
   <div>
     <h1 class="firm">G S Mundada & Co.</h1>
-    <div style="font-size:10px;color:#666;">Chartered Accountants</div>
+    <div style="font-size:11px;font-weight:bold;color:#0B3C5D;">CA Dr. Akash Mundada</div>
+    <div style="font-size:10px;color:#666;">Chartered Accountants | Office: 7020591108</div>
   </div>
   <div style="text-align:right;">
     <div style="font-size:13px;font-weight:bold;color:#0B3C5D;">INCOME TAX COMPUTATION</div>
@@ -124,20 +125,13 @@ export function generatePdfHtml(opts: PdfOptions): string {
   ${row('TOTAL TAX LIABILITY', oldResult.totalTaxLiability, newResult.totalTaxLiability, true)}
 </table>
 
-${(oldResult.totalInterest > 0 || newResult.totalInterest > 0) ? `
-<h2>Interest under Sections 234A / 234B / 234C</h2>
-<table>
-  <tr><th>Particulars</th><th>Old Regime (₹)</th><th>New Regime (₹)</th></tr>
-  ${oldResult.interest234A > 0 || newResult.interest234A > 0 ? row('Interest u/s 234A (Late Filing)', oldResult.interest234A, newResult.interest234A) : ''}
-  ${oldResult.interest234B > 0 || newResult.interest234B > 0 ? row('Interest u/s 234B (Advance Tax Shortfall)', oldResult.interest234B, newResult.interest234B) : ''}
-  ${oldResult.interest234C > 0 || newResult.interest234C > 0 ? row('Interest u/s 234C (Deferment)', oldResult.interest234C, newResult.interest234C) : ''}
-  ${row('TOTAL INTEREST', oldResult.totalInterest, newResult.totalInterest, true)}
-</table>` : ''}
+
+
 
 <h2>Tax Payable / Refund</h2>
 <table>
   <tr><th>Particulars</th><th>Old Regime (₹)</th><th>New Regime (₹)</th></tr>
-  ${row('Total Tax + Interest', oldResult.totalTaxLiability + oldResult.totalInterest, newResult.totalTaxLiability + newResult.totalInterest)}
+  ${row('Total Tax Liability', oldResult.totalTaxLiability, newResult.totalTaxLiability)}
   ${row('Less: TDS', inputs.tds, inputs.tds)}
   ${row('Less: Advance Tax', inputs.advanceTax, inputs.advanceTax)}
   ${row('Less: Self Assessment Tax', inputs.selfAssessmentTax, inputs.selfAssessmentTax)}

@@ -1,7 +1,6 @@
 import { useState, useMemo, useCallback, useEffect } from 'react';
 import { TaxInputs, DEFAULT_INPUTS, DEMO_INPUTS } from '@/lib/tax-types';
 import { BusinessInputs } from '@/lib/business-types';
-import { CapitalGainTransaction } from '@/lib/capital-gains-types';
 import { computeTax } from '@/lib/tax-engine';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Button } from '@/components/ui/button';
@@ -38,9 +37,8 @@ export function TaxCalculator() {
     setInputs(prev => ({ ...prev, businessInputs: biz }));
   }, []);
 
-  const updateTransactions = useCallback((txns: CapitalGainTransaction[]) => {
-    setInputs(prev => ({ ...prev, capitalGainTransactions: txns }));
-  }, []);
+
+
 
   const oldResult = useMemo(() => computeTax(inputs, 'old'), [inputs]);
   const newResult = useMemo(() => computeTax(inputs, 'new'), [inputs]);
@@ -112,7 +110,7 @@ export function TaxCalculator() {
             </div>
           </AccordionTrigger>
           <AccordionContent className="pb-4">
-            <CapitalGainsSection inputs={inputs} update={update} updateTransactions={updateTransactions} />
+            <CapitalGainsSection inputs={inputs} update={update} />
           </AccordionContent>
         </AccordionItem>
 

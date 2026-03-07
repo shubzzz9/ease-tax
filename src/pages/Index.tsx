@@ -13,6 +13,12 @@ const Index = () => {
               <h1 className="text-xl sm:text-2xl md:text-3xl font-display font-bold text-primary">
                 G S Mundada & Co.
               </h1>
+              <p className="text-sm sm:text-base font-semibold text-secondary-foreground/90 mt-0.5">
+                CA Dr. Akash Mundada
+              </p>
+              <p className="text-xs text-secondary-foreground/70">
+                Office: 7020591108
+              </p>
               <div className="flex items-center gap-2 mt-1">
                 <Calculator className="h-4 w-4 text-primary/70" />
                 <p className="text-xs sm:text-sm text-secondary-foreground/80">
