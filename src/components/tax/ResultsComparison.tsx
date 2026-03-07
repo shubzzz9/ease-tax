@@ -42,10 +42,6 @@ export function ResultsComparison({ inputs, oldResult, newResult }: Props) {
       ['Surcharge', oldResult.surcharge, newResult.surcharge],
       ['Cess', oldResult.cess, newResult.cess],
       ['Total Tax', oldResult.totalTaxLiability, newResult.totalTaxLiability],
-      ['Interest 234A', oldResult.interest234A, newResult.interest234A],
-      ['Interest 234B', oldResult.interest234B, newResult.interest234B],
-      ['Interest 234C', oldResult.interest234C, newResult.interest234C],
-      ['Total Interest', oldResult.totalInterest, newResult.totalInterest],
       ['Tax Paid', oldResult.taxPaid, newResult.taxPaid],
       ['Total Amount Payable', oldResult.totalAmountPayable, newResult.totalAmountPayable],
     ];
@@ -142,22 +138,6 @@ export function ResultsComparison({ inputs, oldResult, newResult }: Props) {
           <Row label="Health & Education Cess (4%)" old={oldResult.cess} new={newResult.cess} recommendedRegime={recommended} />
           <Separator className="my-1 bg-border/50" />
           <Row label="TOTAL TAX LIABILITY" old={oldResult.totalTaxLiability} new={newResult.totalTaxLiability} highlight recommendedRegime={recommended} />
-
-          {(oldResult.totalInterest > 0 || newResult.totalInterest > 0) && (
-            <>
-              <Separator className="my-1 bg-border/50" />
-              {(oldResult.interest234A > 0 || newResult.interest234A > 0) && (
-                <Row label="Interest – Late Filing" old={oldResult.interest234A} new={newResult.interest234A} recommendedRegime={recommended} />
-              )}
-              {(oldResult.interest234B > 0 || newResult.interest234B > 0) && (
-                <Row label="Interest – Advance Tax Shortfall" old={oldResult.interest234B} new={newResult.interest234B} recommendedRegime={recommended} />
-              )}
-              {(oldResult.interest234C > 0 || newResult.interest234C > 0) && (
-                <Row label="Interest – Delayed Payment" old={oldResult.interest234C} new={newResult.interest234C} recommendedRegime={recommended} />
-              )}
-              <Row label="Total Interest" old={oldResult.totalInterest} new={newResult.totalInterest} recommendedRegime={recommended} />
-            </>
-          )}
 
           <Row label="Less: Tax Already Paid" old={oldResult.taxPaid} new={newResult.taxPaid} recommendedRegime={recommended} />
           <Separator className="my-1 bg-border/50" />

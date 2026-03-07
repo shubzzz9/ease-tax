@@ -1,7 +1,5 @@
 import { TaxInputs, TaxResult } from './tax-types';
-import { computeAggregatedCapitalGains } from './capital-gains-engine';
 import { computeBusinessIncome } from './business-engine';
-import { computeInterest } from './interest-engine';
 
 interface Slab { limit: number; rate: number }
 
@@ -135,11 +133,9 @@ export function computeTax(inputs: TaxInputs, regime: 'old' | 'new'): TaxResult 
   const employerNps = inputs.employerNps;
   const netSalaryIncome = Math.max(0, grossSalary - hraExemption - standardDeduction - profTax - employerNps);
 
-  // 2. HOUSE PROPERTY
+  // 2. HOUSE PROPERTY (let-out only)
   let housePropertyIncome = 0;
-  if (inputs.propertyType === 'selfOccupied') {
-    housePropertyIncome = -Math.min(inputs.homeLoanInterest, 200000);
-  } else if (inputs.propertyType === 'rented') {
+  if (inputs.propertyType === 'rented') {
     const nav = Math.max(0, inputs.rentReceived - inputs.municipalTaxes);
     housePropertyIncome = nav - nav * 0.3 - inputs.homeLoanInterest;
   }
@@ -157,15 +153,19 @@ export function computeTax(inputs: TaxInputs, regime: 'old' | 'new'): TaxResult 
   const businessIncome = bizResult.taxableBusinessIncome;
   warnings.push(...bizResult.warnings);
 
-  // 4. CAPITAL GAINS
-  const cgResult = computeAggregatedCapitalGains(
-    inputs.capitalGainTransactions, inputs.bfCapitalLossSTCG, inputs.bfCapitalLossLTCG
-  );
-  const capitalGainsNormal = cgResult.capitalGainsNormal;
-  const capitalGainsSpecial = cgResult.capitalGainsSpecial;
-  const stcg111ATax = cgResult.stcg111ATax;
-  const ltcg112ATax = cgResult.ltcg112ATax;
-  const ltcg112TaxAmt = cgResult.ltcg112Tax;
+  // 4. CAPITAL GAINS (direct input)
+  const stcg111A = Math.max(0, inputs.stcgEquity);       // STCG equity @ 20% u/s 111A
+  const ltcg112AGross = Math.max(0, inputs.ltcgEquity);  // LTCG equity u/s 112A
+  const ltcg112ANet = Math.max(0, ltcg112AGross - 125000); // ₹1.25L exemption
+  const stcgSlab = Math.max(0, inputs.stcgProperty);     // STCG property @ slab
+  const ltcg112 = Math.max(0, inputs.ltcgProperty);      // LTCG property @ 12.5% u/s 112
+
+  const stcg111ATax = stcg111A * 0.20;
+  const ltcg112ATax = ltcg112ANet * 0.125;
+  const ltcg112Tax = ltcg112 * 0.125;
+
+  const capitalGainsSpecial = stcg111A + ltcg112ANet + ltcg112;
+  const capitalGainsNormal = stcgSlab;
 
   // 5. OTHER INCOME
   const fpDeduction = inputs.familyPension > 0 ? Math.min(inputs.familyPension / 3, 15000) : 0;
@@ -184,33 +184,21 @@ export function computeTax(inputs: TaxInputs, regime: 'old' | 'new'): TaxResult 
     const isSenior = inputs.ageGroup !== 'below60';
     const d80TTA = isSenior ? Math.min(inputs.sec80TTA, 50000) : Math.min(inputs.sec80TTA, 10000);
 
-    // 80D: Include preventive health checkup within overall 80D limit
     const d80DTotal = (inputs.sec80D || 0) + Math.min(inputs.sec80DPreventive || 0, 5000);
 
-    // 80G: Adjusted Gross Total Income method
-    // Eligible donation = total donation minus cash portion above ₹2,000
     let eligible80G = inputs.sec80G || 0;
     const cashExcess = Math.max(0, (inputs.sec80GCashDonation || 0) - 2000);
     eligible80G = Math.max(0, eligible80G - cashExcess);
 
-    // Adjusted total income for 80G restricted categories
     const adjustedTotalIncome = grossTotalIncome - d80C - d80CCD1B - inputs.sec80D
       - inputs.sec80E - d80TTA - inputs.sec80U - inputs.otherDeductions;
 
     let d80G = 0;
     switch (inputs.sec80GType) {
-      case '100':
-        d80G = eligible80G;
-        break;
-      case '50':
-        d80G = eligible80G * 0.5;
-        break;
-      case '100_restricted':
-        d80G = Math.min(eligible80G, adjustedTotalIncome * 0.10);
-        break;
-      case '50_restricted':
-        d80G = Math.min(eligible80G * 0.5, adjustedTotalIncome * 0.10);
-        break;
+      case '100': d80G = eligible80G; break;
+      case '50': d80G = eligible80G * 0.5; break;
+      case '100_restricted': d80G = Math.min(eligible80G, adjustedTotalIncome * 0.10); break;
+      case '50_restricted': d80G = Math.min(eligible80G * 0.5, adjustedTotalIncome * 0.10); break;
     }
 
     totalDeductions = d80C + d80DTotal + d80CCD1B + inputs.sec80E
@@ -238,7 +226,7 @@ export function computeTax(inputs: TaxInputs, regime: 'old' | 'new'): TaxResult 
   }
 
   // 10. SPECIAL TAX
-  const taxOnSpecial = stcg111ATax + ltcg112ATax + ltcg112TaxAmt;
+  const taxOnSpecial = stcg111ATax + ltcg112ATax + ltcg112Tax;
 
   // 11. REBATE 87A
   let rebate87A = 0;
@@ -277,22 +265,6 @@ export function computeTax(inputs: TaxInputs, regime: 'old' | 'new'): TaxResult 
   // 15. TAX PAID
   const taxPaid = inputs.tds + inputs.advanceTax + inputs.selfAssessmentTax;
 
-  // 16. INTEREST u/s 234A, 234B, 234C
-  const isPresumptive = inputs.businessInputs.taxationType === 'presumptive44AD'
-    || inputs.businessInputs.taxationType === 'presumptive44ADA';
-
-  const interestResult = computeInterest({
-    totalTaxLiability,
-    tds: inputs.tds,
-    advanceTaxTotal: inputs.advanceTax,
-    selfAssessmentTax: inputs.selfAssessmentTax,
-    advanceTaxInstallments: inputs.advanceTaxInstallments,
-    returnFilingDate: inputs.returnFilingDate,
-    dueDate: inputs.dueDate,
-    isPresumptive,
-    useAdvancedMode: inputs.useAdvancedMode,
-  });
-
   return {
     grossSalaryIncome: grossSalary,
     hraExemption,
@@ -304,7 +276,7 @@ export function computeTax(inputs: TaxInputs, regime: 'old' | 'new'): TaxResult 
     capitalGainsSpecial,
     stcg111ATax,
     ltcg112ATax,
-    ltcg112Tax: ltcg112TaxAmt,
+    ltcg112Tax,
     otherIncome: totalOther,
     grossTotalIncome,
     totalDeductions,
@@ -320,11 +292,7 @@ export function computeTax(inputs: TaxInputs, regime: 'old' | 'new'): TaxResult 
     totalTaxLiability,
     taxPaid,
     netPayable: totalTaxLiability - taxPaid,
-    interest234A: interestResult.interest234A,
-    interest234B: interestResult.interest234B,
-    interest234C: interestResult.interest234C,
-    totalInterest: interestResult.totalInterest,
-    totalAmountPayable: totalTaxLiability + interestResult.totalInterest - taxPaid,
+    totalAmountPayable: totalTaxLiability - taxPaid,
     warnings,
   };
 }
