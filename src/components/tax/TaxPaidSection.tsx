@@ -19,16 +19,13 @@ export function TaxPaidSection({ inputs, update }: Props) {
           <h3 className="text-lg font-semibold font-display">Tax Already Paid</h3>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <CurrencyInput label="TDS Deducted" value={inputs.tds}
             onChange={(v) => update('tds', v)}
             tooltip="Total TDS deducted by employer, bank, etc. as shown in Form 26AS" />
           <CurrencyInput label="Advance Tax Paid" value={inputs.advanceTax}
             onChange={(v) => update('advanceTax', v)}
             tooltip="Total advance tax paid during the year" />
-          <CurrencyInput label="Self Assessment Tax" value={inputs.selfAssessmentTax}
-            onChange={(v) => update('selfAssessmentTax', v)}
-            tooltip="Tax paid at the time of filing the return" />
         </div>
       </CardContent>
     </Card>

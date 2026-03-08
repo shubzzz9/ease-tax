@@ -61,7 +61,7 @@ export function TaxCalculator() {
 
       <UserProfile inputs={inputs} update={update} />
 
-      <Accordion type="multiple" defaultValue={showSalary ? ['salary'] : ['business']} className="space-y-2">
+      <Accordion type="multiple" defaultValue={[]} className="space-y-2">
         {showSalary && (
           <AccordionItem value="salary" className="border border-border/50 rounded-lg bg-card/80 px-4">
             <AccordionTrigger className="hover:no-underline py-3">
