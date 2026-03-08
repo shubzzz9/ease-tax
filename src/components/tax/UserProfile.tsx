@@ -54,7 +54,7 @@ export function UserProfile({ inputs, update }: Props) {
               </div>
               <div className="flex items-center gap-1.5">
                 <RadioGroupItem value="business" id="emp-business" />
-                <Label htmlFor="emp-business" className="text-xs cursor-pointer">Business</Label>
+                <Label htmlFor="emp-business" className="text-xs cursor-pointer">Business / Profession</Label>
               </div>
               <div className="flex items-center gap-1.5">
                 <RadioGroupItem value="both" id="emp-both" />
